@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en"> 
+
+{% block head %} 
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<title> Game Ratings </title>
+</head>
+{% endblock %}
+
+{% block body %}
+<body>
+  <h2> Game Ratings </h2>
+  <table class="ratingTable">
+    <tr>
+      <th>Game</th>
+      <th>Rating</th>
+    </tr>
+	{% for row in ratings %}
+      <tr onClick='toggleRow(this)'>
+         <td><a href="{{ row[2] }}">{{ row[1] }}</a>
+		 <input type="image" src="{{ url_for('static', filename='delete_icon.ico') }}" onClick="deleteClick(this)" placeholder="Delete rating" class="tableButton hiddenButton" data-id="{{ row[0] }}"/>
+		 <input type="image" src="{{ url_for('static', filename='edit_icon.ico') }}" onClick="editClick(this)" placeholder="Edit rating" class="tableButton hiddenButton" data-id="{{ row[0] }}"/>
+		 </td>
+         <td>{{ row[3] }}</td>
+         <td class='expanded-row-content hide-row'>{{ row[4] }}</td>
+      </tr>
+	{% endfor %}
+  </table>
+  <a href="javascript:div_show()" class="insert-text">Insert a new rating</a>
+	
+  <div id="pop1">
+	<div id="popup">
+		<form action="#" id="form" method="post" name="form">
+			<img id="close" src="{{ url_for('static', filename='delete_icon.ico') }}" onclick ="div_hide()">
+			<input id="name" name="name" placeholder="Game Name" type="text">
+			<input id="link-source" name="link-source" placeholder="Link" type="text">
+			<input id="rating" name="rating" placeholder="Rating (0-5)" type="number", min="0" max="5">		
+			<textarea id="comment" name="comment" placeholder="Comment"></textarea>
+			<a href="javascript:submit_click()" id="submit_button">Submit</a>
+		</form>
+	</div>
+  </div>
+
+  <script>
+	var table = document.querySelector('.ratingTable');
+	
+	table.addEventListener('mouseover', tableHoverIn);
+	table.addEventListener('mouseout', tableHoverOut);
+
+	var cancelClick = false;
+	var editing_id = -1;
+	
+	function tableHoverIn(event) 
+	{
+		var element = event.target;
+		for (var i = 0; i < element.children.length; i++) 
+		{
+			if (element.children[i].className.startsWith("tableButton")) 
+			{
+				element.children[i].className = "tableButton";
+			}        
+		}
+	}
+
+	function tableHoverOut(event) 
+	{
+		var element = event.target;
+		for (var i = 0; i < element.children.length; i++) 
+		{
+			if (element.children[i].className.startsWith("tableButton")) 
+			{
+				element.children[i].className = "tableButton hiddenButton";
+			}        
+		}
+	}
+	
+    function toggleRow(element)
+	{
+		if(cancelClick)
+		{
+			cancelClick = false;
+			return;
+		}
+		element.getElementsByClassName('expanded-row-content')[0].classList.toggle('hide-row');
+    }
+	
+	function editClick(element)
+	{		
+		var dataid = element.dataset.id;
+		var parentElement = element.parentElement;
+		var superParent = parentElement.parentElement;
+		
+		cancelClick = true;
+		editing_id = dataid;
+		
+		var hrefElement = parentElement.getElementsByTagName( 'a' )[0];
+		var ratingElement = superParent.getElementsByTagName( 'td' )[1];
+		var commentElement = superParent.getElementsByTagName( 'td' )[2];
+		
+		document.getElementById("name").value = hrefElement.innerHTML; 
+		document.getElementById("link-source").value = hrefElement.href; 
+		document.getElementById("rating").value = ratingElement.innerHTML; 
+		document.getElementById("comment").value = commentElement.innerHTML; 
+		
+		document.getElementById('pop1').style.display = "block";
+	}
+	
+	function deleteClick(element)
+	{	
+		var dataid = element.dataset.id;
+		var u_rl = "/api/v1/resources/ratings/" + dataid.toString();
+		cancelClick = true;
+		
+		$.ajax({
+			url: u_rl,
+			type: 'DELETE',
+			data: '',
+			success: function(data) {
+				location.reload();
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				alert("Error: " + errorThrown);
+			}
+		});
+		
+	}
+	
+	function div_show() 
+	{
+		document.getElementById("name").value = ""; 
+		document.getElementById("link-source").value = ""; 
+		document.getElementById("rating").value = ""; 
+		document.getElementById("comment").value = ""; 
+		
+		editing_id = -1;
+		document.getElementById('pop1').style.display = "block";
+	}
+	
+	function div_hide()
+	{
+		document.getElementById('pop1').style.display = "none";
+	}
+	
+	function HTMLEncode(str) 
+	{
+		var i;
+        var endString = "";
+		for (i = 0; i < str.length; i++) 
+		{
+			if (str[i] == '&') 
+			{
+				endString += '%26';
+			} 
+			else 
+			{
+				endString += str[i];
+			}			
+		}
+		return endString;
+	}
+	
+	function submit_click(element)
+	{
+		var nameValue = document.getElementById("name").value.trim();
+		var sourceValue = document.getElementById("link-source").value.trim();
+		var ratingValue = document.getElementById("rating").value.trim();
+		var commentValue = document.getElementById("comment").value.trim();
+		
+		if(nameValue == "" || sourceValue == "" || ratingValue == "" || commentValue == "")
+		{
+			alert("Not all fields have been filled!");
+			return;
+		}
+		
+		var rating_int = parseInt(ratingValue, 10);		
+		if(isNaN(rating_int))
+		{
+			alert("Rating must be a number!");
+			return;
+		}
+		
+		if(rating_int < 0 || rating_int > 5)
+		{
+			alert("Rating must be between 0 and 5!");
+			return;
+		}
+		
+		nameValue = HTMLEncode(nameValue);
+		sourceValue = HTMLEncode(sourceValue);
+		ratingValue = HTMLEncode(ratingValue);
+		commentValue = HTMLEncode(commentValue);
+		
+		//no idea how to string format on javascript :(
+		var post_data = "?name=" + nameValue + "&source=" + sourceValue + "&rating=" + ratingValue + "&comment=" + commentValue; 
+		
+		if(editing_id == -1) //not editing
+		{
+			var u_rl = "/api/v1/resources/ratings/" + post_data;
+			$.ajax({
+				url: u_rl,
+				type: 'POST',
+				data: '',
+				success: function(data) {
+					location.reload();
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+					alert("Error: " + errorThrown);
+				}
+			});
+		}
+		else
+		{
+			var u_rl = "/api/v1/resources/ratings/" + editing_id.toString() + post_data;		
+			$.ajax({
+				url: u_rl,
+				type: 'PUT',
+				data: '',
+				success: function(data) {
+					location.reload();
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+					alert("Error: " + errorThrown);
+				}
+			});
+		}
+	}
+	
+  </script>
+
+</body>
+
+{% endblock %}
+</html>
+
+

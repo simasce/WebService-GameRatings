@@ -1,0 +1,337 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "WebService-API",
+    "description": "API definition for the dockerized web service.",
+    "version": "0.1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Ratings",
+      "description": "Everything involving work with rating API."
+    }
+  ],
+  "paths": {
+    "/api/v1/resources/ratings/": {
+      "get": {
+        "tags": [
+          "Ratings"
+        ],
+        "description": "Returns all rating entries from database.",
+        "responses": {
+          "200": {
+            "description": "Successfully returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "0": {
+                    "value": "[\n  {\n    \"id\": 1, \n    \"name\": \"Half-Life\", \n    \"source\": \"https://www.half-life.com/en/halflife\", \n    \"rating\": 4, \n    \"comment\": \"One of the first FPS games I've ever played.\"\n  }, \n  {\n    \"id\": 2, \n    \"name\": \"Half-Life 2\", \n    \"source\": \"https://www.half-life.com/en/halflife2\", \n    \"rating\": 5, \n    \"comment\": \"The game that made me enjoy half-life as series. The graphics stand the test of time and the addition of physics into gameplay makes it way more immersive.\"\n  }, \n  {\n    \"id\": 3, \n    \"name\": \"Warcraft 3\", \n    \"source\": \"https://playwarcraft3.com/en-us/\", \n    \"rating\": 5, \n    \"comment\": \"First game I've ever played. Got me hooked into real-time strategy games and the whole Warcraft universe. Big fan to this day.\"\n  }, \n  {\n    \"id\": 4, \n    \"name\": \"World of Warcraft: Shadowlands\", \n    \"source\": \"https://worldofwarcraft.com/en-us/\", \n    \"rating\": 4, \n    \"comment\": \"A great MMO that I still play to this day. Current expansion has a great overhaul to levelling making it way more fun. New story content is also great, however, the endgame content feels a bit lackluster if playing solo.\"\n  }, \n  {\n    \"id\": 5, \n    \"name\": \"Mass Effect 2\", \n    \"source\": \"https://www.ea.com/games/mass-effect/mass-effect-2\", \n    \"rating\": 5, \n    \"comment\": \"One of the greatest single-player RPGs to date. Great replayability value and fun gameplay.\"\n  }, \n  {\n    \"id\": 6, \n    \"name\": \"The Elder Scrolls V: Skyrim\", \n    \"source\": \"https://elderscrolls.bethesda.net/skyrim\", \n    \"rating\": 4, \n    \"comment\": \"A great sandbox singleplayer RPG. Countless hours of fun gameplay and replayability and great mods. However, filled with many bugs and optimization issues.\"\n  }, \n  {\n    \"id\": 7, \n    \"name\": \"Call of Duty: Modern Warfare 2\", \n    \"source\": \"https://store.steampowered.com/app/10180/Call_of_Duty_Modern_Warfare_2/\", \n    \"rating\": 3, \n    \"comment\": \"Great singleplayer story and arguably the best multiplayer COD experience to date. However, the nerfed modding and lack of server support in comparison to previous installments in the series and also being prone to dangerous exploits such as RCE, it's hard to give this game a good score.\"\n  }, \n  {\n    \"id\": 8, \n    \"name\": \"Arma 3\", \n    \"source\": \"https://arma3.com/\", \n    \"rating\": 4, \n    \"comment\": \"The best military simulator. Has large scale warfare and great multiplayer experience. However, plagued by bad optimization.\"\n  }, \n  {\n    \"id\": 9, \n    \"name\": \"Battlefield 4\", \n    \"source\": \"https://www.ea.com/games/battlefield/battlefield-4\", \n    \"rating\": 4, \n    \"comment\": \"Great multiplayer experience. Amazing new features such as full environmental destruction. Pretty bad and exploitable networking code.\"\n  }\n]\n"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers": [
+          {
+            "url": "http://localhost:5000"
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Ratings"
+        ],
+        "description": "Inserts a new rating entry.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The name of the game.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Counter-Strike"
+          },
+          {
+            "name": "rating",
+            "in": "query",
+            "description": "The rating for the game.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": "2"
+          },
+          {
+            "name": "comment",
+            "in": "query",
+            "description": "Comment for the given rating.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Too many cheaters"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Link to the game's web page.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "https://www.counter-strike.net"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully added new entry.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "0": {
+                    "value": "[\n  {\n    \"id\": 14, \n    \"name\": \"Counter-Strike\", \n    \"source\": \"https://www.counter-strike.net\", \n    \"rating\": 2, \n    \"comment\": \"Too many cheaters\"\n  }\n]\n"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Wrong input or lack of parameters."
+          },
+          "500": {
+            "description": "Serverside failure when adding new entry."
+          }
+        },
+        "servers": [
+          {
+            "url": "http://localhost:5000"
+          }
+        ]
+      },
+      "servers": [
+        {
+          "url": "http://localhost:5000"
+        }
+      ]
+    },
+    "/api/v1/resources/ratings/{rating_id}": {
+      "get": {
+        "tags": [
+          "Ratings"
+        ],
+        "description": "Returns a single rating entry with given ID.",
+        "parameters": [
+          {
+            "name": "rating_id",
+            "in": "path",
+            "description": "The ID of the rating to parse.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            },
+            "example": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully returned the rating entry.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "0": {
+                    "value": "[\n  {\n    \"id\": 1, \n    \"name\": \"Half-Life\", \n    \"source\": \"https://www.half-life.com/en/halflife\", \n    \"rating\": 4, \n    \"comment\": \"One of the first FPS games I've ever played.\"\n  }\n]\n"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID is not a number."
+          },
+          "404": {
+            "description": "Rating not found with given ID."
+          }
+        },
+        "servers": [
+          {
+            "url": "http://localhost:5000"
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Ratings"
+        ],
+        "description": "Update an existing rating.",
+        "parameters": [
+          {
+            "name": "rating_id",
+            "in": "path",
+            "description": "The ID of the rating to change.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            },
+            "example": "1"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The name of the game.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Counter-Strike"
+          },
+          {
+            "name": "rating",
+            "in": "query",
+            "description": "The rating for the game.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": "3"
+          },
+          {
+            "name": "comment",
+            "in": "query",
+            "description": "Comment for the given rating.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Too many cheaters"
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Link to the game's web page.",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "https://www.counter-strike.net"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated rating entry.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "0": {
+                    "value": "[\n  {\n    \"id\": 14, \n    \"name\": \"Counter-Strike\", \n    \"source\": \"https://www.counter-strike.net\", \n    \"rating\": 3, \n    \"comment\": \"Too many cheaters\"\n  }\n]\n"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Wrong input or lack of parameters."
+          },
+          "404": {
+            "description": "Rating not found with given ID."
+          }
+        },
+        "servers": [
+          {
+            "url": "http://localhost:5000"
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Ratings"
+        ],
+        "description": "Deletes a rating entry by ID.",
+        "parameters": [
+          {
+            "name": "rating_id",
+            "in": "path",
+            "description": "The ID of the rating to delete.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "integer"
+            },
+            "example": "1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Entry successfully deleted.",
+            "content": {
+              "text/html; charset=utf-8": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Rating not found with given ID."
+          }
+        },
+        "servers": [
+          {
+            "url": "http://localhost:5000"
+          }
+        ]
+      },
+      "servers": [
+        {
+          "url": "http://localhost:5000"
+        }
+      ]
+    }
+  },
+  "components": {}
+}
