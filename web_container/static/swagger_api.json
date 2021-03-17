@@ -103,7 +103,7 @@
           }
         ],
         "responses": {
-          "200": {
+          "201": {
             "description": "Successfully added new entry.",
             "content": {
               "application/json": {

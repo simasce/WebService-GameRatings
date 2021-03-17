@@ -102,7 +102,9 @@ def add_rating():
 	if cursor.lastrowid <= 0:
 		return "Could not insert item!", 500
 	
-	return rating_get(cursor.lastrowid)
+	resp = make_response(rating_get(cursor.lastrowid), 201)
+	resp.headers["Added-Path"] = "/api/v1/resources/ratings/" + str(cursor.lastrowid)
+	return resp
 	
 @app.route("/api/v1/resources/ratings/<int:id>", methods=["PUT"])
 def rating_update(id):
@@ -128,7 +130,10 @@ def rating_update(id):
 	db.commit()
 	if cursor.rowcount <= 0:
 		return "Could not find such item", 404
-	return rating_get(id)
+		
+	resp = make_response(rating_get(id), 200)
+	resp.headers["Updated-Path"] = "/api/v1/resources/ratings/" + str(id)
+	return resp
 	
 @app.route("/api/v1/resources/ratings/<int:id>", methods=["GET"])
 def rating_get(id):
