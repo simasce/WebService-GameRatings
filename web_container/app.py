@@ -103,7 +103,7 @@ def add_rating():
 		return "Could not insert item!", 500
 	
 	resp = make_response(rating_get(cursor.lastrowid), 201)
-	resp.headers["Added-Path"] = "/api/v1/resources/ratings/" + str(cursor.lastrowid)
+	resp.headers["location"] = "/api/v1/resources/ratings/" + str(cursor.lastrowid)
 	return resp
 	
 @app.route("/api/v1/resources/ratings/<int:id>", methods=["PUT"])
@@ -132,7 +132,7 @@ def rating_update(id):
 		return "Could not find such item", 404
 		
 	resp = make_response(rating_get(id), 200)
-	resp.headers["Updated-Path"] = "/api/v1/resources/ratings/" + str(id)
+	resp.headers["location"] = "/api/v1/resources/ratings/" + str(id)
 	return resp
 	
 @app.route("/api/v1/resources/ratings/<int:id>", methods=["GET"])
